@@ -138,3 +138,14 @@
   [[ $result == *"function_ut"* ]]
   [[ $result == *"pc=0x2808"* ]]
 }
+
+@test "Check calling convention" {
+  export R2M2_ARCH=armb
+
+  # GV: ARM on ARM seems to work without an SDB file
+
+  # Call r2
+  result=$(r2 -a r2m2 -qc 'af+ 0x20 strlen; e io.cache=true; wa MOV R0, 8; s 4; wa BL 0x20; s 8; wz Hello; e asm.emu=true ; pd 2 @ 0' binary)
+  [[ $result == *"strlen"* ]]
+  [[ $result == *'lr=0x8 "Hello"'* ]]
+}
